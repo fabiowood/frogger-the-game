@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable no-alert */
+/* eslint-disable max-len */
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable default-case */
@@ -24,7 +27,14 @@ const frogRoad = {
   stop: function () {
     clearInterval(this.interval);
   },
-  // score: function()
+  borders: function () {
+    const borderUp = frogger.y === 0;
+    const borderDown = frogger.y === this.canvas.height;
+    const borderLeft = frogger.x === 0;
+    const borderRight = frogger.x === this.canvas.width;
+    return borderUp || borderDown || borderLeft || borderRight;
+  },
+  // score: function ()
   // restart: function()
   // pause: function()
 };
@@ -53,9 +63,34 @@ class Frog {
     frogRoad.context.fillStyle = 'red';
     frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
   }
+
+  left() {
+    return this.x;
+  }
+
+  right() {
+    return this.x + this.width;
+  }
+
+  top() {
+    return this.y;
+  }
+
+  bottom() {
+    return this.y + this.height;
+  }
+
+  crashWith(RoadObstacles) {
+    return !(
+      this.bottom() < RoadObstacles.top() ||
+      this.top() > RoadObstacles.bottom() ||
+      this.right() < RoadObstacles.left() ||
+      this.left() > RoadObstacles.right()
+    );
+  }
 }
 
-const frogger = new Frog(20, 20, 600, 560);
+const frogger = new Frog(30, 30, 600, 560);
 
 // Create the User Interactions!
 
@@ -101,18 +136,34 @@ class RoadObstacles {
     frogRoad.context.fillStyle = 'green';
     frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
   }
+
+  left() {
+    return this.x;
+  }
+
+  right() {
+    return this.x + this.width;
+  }
+
+  top() {
+    return this.y;
+  }
+
+  bottom() {
+    return this.y + this.height;
+  }
 }
 
 const updateObstacles = () => {
   frogRoad.frames += 1;
   let x = frogRoad.canvas.width;
   let y = frogRoad.canvas.height;
-  if (frogRoad.frames % 150 === 0) {
+  if (frogRoad.frames % 120 === 0) {
     for (let roadCounter = 0; roadCounter < 7; roadCounter += 1) {
       if (roadCounter % 2 === 0) {
         y -= 80;
         createObstacles.push(new RoadObstacles(60, 20, x, y));
-      } else {
+      } else if (roadCounter % 2 !== 0) {
         x = 0;
         y -= 80;
         createObstacles.push(new RoadObstacles(60, 20, x, y));
@@ -121,16 +172,44 @@ const updateObstacles = () => {
   }
   for (let obstacleCounter = 0; obstacleCounter < createObstacles.length; obstacleCounter += 1) {
     if (obstacleCounter % 2 === 0) {
-      createObstacles[obstacleCounter].x += -1;
+      createObstacles[obstacleCounter].x -= 1;
       createObstacles[obstacleCounter].move();
-    } else {
+    } else if (obstacleCounter % 2 !== 0) {
       createObstacles[obstacleCounter].x += 1;
       createObstacles[obstacleCounter].move();
     }
   }
 };
 
-// Create the Game Over Conditions!
+// Check Phase Completion and Change Level!
+
+// Create the Game Over Conditions! - Check if it is an Obstacle!
+
+const checkGameOver = () => {
+  const collideWithObstacles = createObstacles.some((RoadObstacles) => frogger.crashWith(RoadObstacles));
+  const collideWithBorders = frogRoad.borders();
+  if (collideWithObstacles || collideWithBorders) {
+    frogRoad.stop();
+    if (frogger.lifes > 0) {
+      const returnToBeginnning = () => {
+        console.log('try again');
+        alert('try again!');
+        frogger.lifes -= 1;
+        frogger.x = 600;
+        frogger.y = 560;
+        frogRoad.context.fillStyle = 'red';
+        frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
+        const tryAgain = setTimeout(frogRoad.start(), 2000);
+        document.onkeyup();
+        return tryAgain;
+      };
+      returnToBeginnning();
+    } else {
+      console.log('game over!');
+      alert('game over for this frog!');
+    }
+  }
+};
 
 // Create the Update Game!
 
@@ -139,6 +218,7 @@ const playFrog = () => {
   frogger.newPosition();
   frogger.updateFrog();
   updateObstacles();
+  checkGameOver();
 };
 
 frogRoad.start();
