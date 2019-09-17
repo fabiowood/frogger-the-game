@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"frogger-game.js":[function(require,module,exports) {
+})({"frogger-newgame.js":[function(require,module,exports) {
 /* eslint-disable default-case */
 
 /* eslint-disable max-classes-per-file */
@@ -153,40 +153,26 @@ var context = canvas.getContext('2d'); // Create the Game Area!
 // Create the Frog!
 
 var frog = {
-  x: 350,
-  y: 750,
-  width: 50,
-  height: 50,
-  lifes: 3,
-  immunity: false // moveUp: function () {
-  //   // this.SpeedY = 50;
-  //   this.y -= 50;
-  // },
-  // moveDown: function () {
-  //   // this.SpeedY = 50;
-  //   this.y += 50;
-  // },
-  // moveLeft: function () {
-  //   // this.Speedx = 50;
-  //   this.x -= 50;
-  // },
-  // moveRight: function () {
-  //   // this.SpeedX = 50;
-  //   this.x += 50;
-  // },
-  // newPosition() {
-  //   this.x = this.x;
-  //   this.y = this.y;
-  // },
-  //   const img = new Image();
-  //   img.src = './images/frogger.png';
-  //   img.onload = function () {
-  //     frogRoad.context.drawImage(img, this.x, this.y, 50, 50);
-  //     console.log(img);
-  //   };
-  // },
-  // },
-
+  x: 50,
+  y: 50,
+  // lifes: 3,
+  // immunity: false,
+  moveUp: function moveUp() {
+    // this.SpeedY = 50;
+    this.y -= 50;
+  },
+  moveDown: function moveDown() {
+    // this.SpeedY = 50;
+    this.y += 50;
+  },
+  moveLeft: function moveLeft() {
+    // this.Speedx = 50;
+    this.x -= 50;
+  },
+  moveRight: function moveRight() {
+    // this.SpeedX = 50;
+    this.x += 50;
+  }
 };
 
 function drawFrog(frog) {
@@ -196,27 +182,35 @@ function drawFrog(frog) {
     context.drawImage(img, frog.x, frog.y, 50, 50);
   };
 
-  img.src = './images/frogger.png';
-} // const frogger = new Frog(350, 750, 50, 50);frogger
-// Create the User Interactions!
-// document.onkeydown = function (e) {
-//   switch (e.keyCode) {
-//     case 38: // up arrow
-//       frog.moveUp();
-//       break;
-//     case 40: // down arrow
-//       frog.moveDown();
-//       break;
-//     case 37: // left arrow
-//       frog.moveLeft();
-//       break;
-//     case 39: // right arrow
-//       frog.moveRight();
-//       break;
-//   }
-//   // playFrog();
-// };
-// Create the Obstacles!
+  img.src = 'https://media.giphy.com/media/Qr8JE9Hvi7ave/200.gif';
+} // Create the User Interactions!
+
+
+document.onkeydown = function (e) {
+  switch (e.keyCode) {
+    case 38:
+      // up arrow
+      frog.moveUp();
+      break;
+
+    case 40:
+      // down arrow
+      frog.moveDown();
+      break;
+
+    case 37:
+      // left arrow
+      frog.moveLeft();
+      break;
+
+    case 39:
+      // right arrow
+      frog.moveRight();
+      break;
+  }
+
+  playFrog();
+}; // Create the Obstacles!
 // class Obstacles {
 //   constructor(x, y) {
 //     this.x = x;
@@ -234,7 +228,7 @@ function drawFrog(frog) {
 
 function playFrog() {
   // frogRoad.start();
-  context.clearRect(0, 0, 350, 700); // frog.newPosition();
+  context.clearRect(0, 0, 750, 750); // frog.newPosition();
 
   drawFrog(frog); // createLakeSupport();
   // createObstacles();
@@ -445,5 +439,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/hmr-runtime.js","frogger-game.js"], null)
-//# sourceMappingURL=/frogger-game.7acc2689.js.map
+},{}]},{},["../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/hmr-runtime.js","frogger-newgame.js"], null)
+//# sourceMappingURL=/frogger-newgame.0301b4b4.js.map

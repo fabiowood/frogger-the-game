@@ -117,132 +117,79 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"frogger-game.js":[function(require,module,exports) {
-/* eslint-disable default-case */
+})({"../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
 
-/* eslint-disable max-classes-per-file */
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
+  }
 
-/* eslint-disable func-names */
-
-/* eslint-disable object-shorthand */
-console.log('start frog!');
-var canvas = document.getElementById('canvas');
-var context = canvas.getContext('2d'); // Create the Game Area!
-// function drawFrogRoad() {
-// }
-// const frogRoad = {
-//   canvas: document.createElement('canvas'),
-//   // eslint-disable-next-line func-names
-//   start: function () {
-//     this.canvas.width = 700;
-//     this.canvas.height = 700;
-//     this.context = this.canvas.getContext('2d');
-//     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-//     this.interval = setInterval(playFrog, 20);
-//   },
-//   clear: function () {
-//     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-//   },
-//   // stop: function () {
-//   //   clearInterval(this.interval);
-//   // },
-//   // score: function()
-//   // restart: function()
-//   // pause: function()
-// };
-// Create the Frog!
-
-var frog = {
-  x: 350,
-  y: 750,
-  width: 50,
-  height: 50,
-  lifes: 3,
-  immunity: false // moveUp: function () {
-  //   // this.SpeedY = 50;
-  //   this.y -= 50;
-  // },
-  // moveDown: function () {
-  //   // this.SpeedY = 50;
-  //   this.y += 50;
-  // },
-  // moveLeft: function () {
-  //   // this.Speedx = 50;
-  //   this.x -= 50;
-  // },
-  // moveRight: function () {
-  //   // this.SpeedX = 50;
-  //   this.x += 50;
-  // },
-  // newPosition() {
-  //   this.x = this.x;
-  //   this.y = this.y;
-  // },
-  //   const img = new Image();
-  //   img.src = './images/frogger.png';
-  //   img.onload = function () {
-  //     frogRoad.context.drawImage(img, this.x, this.y, 50, 50);
-  //     console.log(img);
-  //   };
-  // },
-  // },
-
-};
-
-function drawFrog(frog) {
-  var img = new Image();
-
-  img.onload = function () {
-    context.drawImage(img, frog.x, frog.y, 50, 50);
-  };
-
-  img.src = './images/frogger.png';
-} // const frogger = new Frog(350, 750, 50, 50);frogger
-// Create the User Interactions!
-// document.onkeydown = function (e) {
-//   switch (e.keyCode) {
-//     case 38: // up arrow
-//       frog.moveUp();
-//       break;
-//     case 40: // down arrow
-//       frog.moveDown();
-//       break;
-//     case 37: // left arrow
-//       frog.moveLeft();
-//       break;
-//     case 39: // right arrow
-//       frog.moveRight();
-//       break;
-//   }
-//   // playFrog();
-// };
-// Create the Obstacles!
-// class Obstacles {
-//   constructor(x, y) {
-//     this.x = x;
-//     this.y = y;
-//     this.SpeedX = 0;
-//     this.SpeedY = 0;
-//     this.power = true;
-//   }
-//   // update()
-//   // draw()
-// }
-// Create the Game Over Conditions!
-// Create the Update Game!
-
-
-function playFrog() {
-  // frogRoad.start();
-  context.clearRect(0, 0, 350, 700); // frog.newPosition();
-
-  drawFrog(frog); // createLakeSupport();
-  // createObstacles();
-  // checkGameOver();
+  return bundleURL;
 }
 
-playFrog();
-},{}],"../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+
+  return '/';
+}
+
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
+  };
+
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+}
+
+module.exports = reloadCSS;
+},{"./bundle-url":"../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/bundle-url.js"}],"frogger-game.css":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/css-loader.js"}],"../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -445,5 +392,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/hmr-runtime.js","frogger-game.js"], null)
-//# sourceMappingURL=/frogger-game.7acc2689.js.map
+},{}]},{},["../../../../../../../.nvm/versions/node/v12.9.1/lib/node_modules/parcel/src/builtins/hmr-runtime.js"], null)
+//# sourceMappingURL=/frogger-game.4bcfa28c.js.map
