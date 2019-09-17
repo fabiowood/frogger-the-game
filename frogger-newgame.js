@@ -28,11 +28,11 @@ const frogRoad = {
     clearInterval(this.interval);
   },
   borders: function () {
-    const borderUp = frogger.y === 0;
-    const borderDown = frogger.y === this.canvas.height;
-    const borderLeft = frogger.x === 0;
-    const borderRight = frogger.x === this.canvas.width;
-    return borderUp || borderDown || borderLeft || borderRight;
+    const borderUp = frogger.y < -12;
+    const borderDown = frogger.y > this.canvas.height + 10;
+    const borderLeft = frogger.x < -12;
+    const borderRight = frogger.x > this.canvas.width + 10;
+    return (borderUp || borderDown || borderLeft || borderRight);
   },
   // score: function ()
   // restart: function()
@@ -59,7 +59,6 @@ class Frog {
   }
 
   updateFrog() {
-    // const ctx = frogRoad.context;
     frogRoad.context.fillStyle = 'red';
     frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
   }
@@ -156,26 +155,24 @@ class RoadObstacles {
 
 const updateObstacles = () => {
   frogRoad.frames += 1;
-  let x = frogRoad.canvas.width;
   let y = frogRoad.canvas.height;
   if (frogRoad.frames % 120 === 0) {
     for (let roadCounter = 0; roadCounter < 7; roadCounter += 1) {
       if (roadCounter % 2 === 0) {
         y -= 80;
-        createObstacles.push(new RoadObstacles(60, 20, x, y));
-      } else if (roadCounter % 2 !== 0) {
-        x = 0;
+        createObstacles.push(new RoadObstacles(60, 20, 1200, y));
+      } else {
         y -= 80;
-        createObstacles.push(new RoadObstacles(60, 20, x, y));
+        createObstacles.push(new RoadObstacles(60, 20, -60, y));
       }
     }
   }
   for (let obstacleCounter = 0; obstacleCounter < createObstacles.length; obstacleCounter += 1) {
     if (obstacleCounter % 2 === 0) {
-      createObstacles[obstacleCounter].x -= 1;
-      createObstacles[obstacleCounter].move();
-    } else if (obstacleCounter % 2 !== 0) {
       createObstacles[obstacleCounter].x += 1;
+      createObstacles[obstacleCounter].move();
+    } else {
+      createObstacles[obstacleCounter].x -= 1;
       createObstacles[obstacleCounter].move();
     }
   }
