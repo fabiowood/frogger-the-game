@@ -19,7 +19,7 @@ const frogRoad = {
     this.canvas.height = 600;
     this.context = this.canvas.getContext('2d');
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    this.interval = setInterval(playFrog, 20);
+    this.interval = setInterval(playFrog, 40);
   },
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -114,6 +114,10 @@ document.onkeydown = (e) => {
       setTimeout(() => {
         frogState = !frogState;
       }, 100);
+      sinkInWater = !sinkInWater;
+      setTimeout(() => {
+        sinkInWater = !sinkInWater;
+      }, 100);
       break;
     case 90: // key: z
       frogState = !frogState;
@@ -178,23 +182,23 @@ class RoadObstacles {
 const updateObstacles = () => {
   frogRoad.frames += 1;
   let yObs = frogRoad.canvas.height;
-  let yLakeObject = frogRoad.canvas.height - frogger.height - 300;
-  if (frogRoad.frames % 100 === 0) {
-    for (let roadCounter = 0; roadCounter < 5; roadCounter += 1) {
+  let yLakeObject = frogRoad.canvas.height - 350;
+  if (frogRoad.frames % 110 === 0) {
+    for (let roadCounter = 0; roadCounter < 3; roadCounter += 1) {
       if (roadCounter % 2 === 0) {
-        yObs -= 62;
+        yObs -= 80;
         createObstacles.push(new RoadObstacles(60, 20, 1200, yObs));
       } else {
-        yObs -= 62;
+        yObs -= 80;
         createObstacles.push(new RoadObstacles(60, 20, -60, yObs));
       }
     }
     for (let lakeCounter = 0; lakeCounter < 3; lakeCounter += 1) {
       if (lakeCounter % 2 === 0) {
-        yLakeObject -= 60;
+        yLakeObject -= 55;
         createLakeObjects.push(new RoadObstacles(60, 20, -60, yLakeObject));
       } else {
-        yLakeObject -= 60;
+        yLakeObject -= 55;
         createLakeObjects.push(new RoadObstacles(60, 20, 1200, yLakeObject));
       }
     }
@@ -221,7 +225,11 @@ const updateObstacles = () => {
 
 // Check Phase Completion and Change Level!
 
-const createBoxes = [];
+const createBoxes = []; // fixed boxes inside the FrogRoad Area
+
+const boxBoundaries = []; // walls between boxes
+
+const notAllowedBoxes = []; // array with boxes already filled by the player
 
 class Boxes {
   constructor(width, height, x, y) {
@@ -233,64 +241,63 @@ class Boxes {
 }
 
 const drawBoxes = () => {
-  this.width = 110;
+  this.width = 135;
   this.height = 60;
   this.x = 110;
   this.y = 0;
-  for (let boxCounter = 0; boxCounter < 5; boxCounter += 1) {
+  for (let boxCounter = 0; boxCounter < 4; boxCounter += 1) {
     if (boxCounter === 0) {
       createBoxes.push(new Boxes(this.width, this.height, 0, this.y));
+      boxBoundaries.push(new Boxes(this.x, this.y, this.width, this.height));
       frogRoad.context.fillStyle = 'green';
       frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
     } else {
       this.x += this.width * 2;
       createBoxes.push(new Boxes(this.width, this.height, this.x - this.width, 0));
+      boxBoundaries.push(new Boxes(this.x, this.y, this.width, this.height));
       frogRoad.context.fillStyle = 'green';
       frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
     }
   }
 };
 
-// const checkWin = () => {
-//     const targetBoxes = 0;
-//     const fillBoxes = createBoxes.forEach((box) => {
-//         if (frooger.y <= 60 && (frogger.x > box.x && frogger.x < box.width * 2)
-//         });
-//       if (fillBoxes) {
-//         const returnToBeginnning = () => {
-//           targetBoxes += 1;
-//           if (targetBoxes === 5) {
-//             console.log('Well Done! Go To Next Level!');
-//             alert('Well Done! Go To Next Level!');
-//             frogger.x = 600;
-//             frogger.y = 560;
-//             frogRoad.context.fillStyle = 'red';
-//             frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
-//             const goNextLevel = setTimeout(frogRoad.start(), 2000);
-//             document.onkeyup();
-//             return goNextLevel;
-//           }
-//           console.log('good job');
-//           alert('good job!');
-//           frogger.x = 600;
-//           frogger.y = 560;
-//           frogRoad.context.fillStyle = 'red';
-//           frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
-//           const fillAnotherBox = setTimeout(frogRoad.start(), 2000);
-//           document.onkeyup();
-//           return fillAnotherBox;
-//         };
-//         returnToBeginnning();
-//       }
-//     };
-
+const checkWin = () => {
+  let targetBoxes = 0;
+  const fillBoxes = createBoxes.some((box) => (frogger.y <= box.height) && (frogger.x > box.x && frogger.x < box.x + box.width));
+  if (fillBoxes) {
+    const returnToBeginning = () => {
+      targetBoxes += 1;
+      notAllowedBoxes.push(new Boxes(100, 60, frogger.x, frogger.y));
+      if (targetBoxes === 5) {
+        console.log('Well Done! Go To Next Level!');
+        alert('Well Done! Go To Next Level!');
+        frogger.x = 600;
+        frogger.y = 560;
+        const goNextLevel = setTimeout(frogRoad.start(), 2000);
+        document.onkeyup();
+        return goNextLevel;
+      }
+      console.log('good job');
+      alert('good job!');
+      frogger.x = 600;
+      frogger.y = 560;
+      frogRoad.context.fillStyle = 'red';
+      frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
+      const fillAnotherBox = setTimeout(frogRoad.start(), 2000);
+      document.onkeyup();
+      return fillAnotherBox;
+    };
+    returnToBeginning();
+  }
+};
 
 // Create the Game Over Conditions! - Check if it is an Obstacle!
 
 let frogState = true;
 
+let sinkInWater = true;
+
 const checkJumpToObject = () => {
-  // const lakeFrontier = frogRoad.canvas.height - frogger.height - 350;
   if (frogState) {
     createLakeObjects.some((wood) => {
       if (frogger.crashWith(wood)) {
@@ -304,7 +311,19 @@ const checkJumpToObject = () => {
 const checkGameOver = () => {
   const collideWithObstacles = createObstacles.some((RoadObstacles) => frogger.crashWith(RoadObstacles));
   const collideWithBorders = frogRoad.borders();
-  if (collideWithObstacles || collideWithBorders) {
+  const collideWithFilledBoxes = notAllowedBoxes.some((box) => (frogger.y <= box.y) && (frogger.x >= box.x) && (frogger.x <= box.x + box.width));
+  const collideBetweenBoxes = boxBoundaries.some((boundary) => (frogger.y <= boundary.y) && (frogger.x >= boundary.x) && (frogger.x <= boundary.x + boundary.width));
+  // let collideBetweenBoxes = false;
+  // const collideToBoxBoundaries = () => {
+  //   if ((frogger.y <= 60) && ((frogger.x >= 110 && frogger.x <= 245) || (frogger.x >= 380 && frogger.x <= 515) || (frogger.x >= 650 && frogger.x <= 785) || (frogger.x >= 920 && frogger.x <= 1055))) {
+  //     collideBetweenBoxes = true;
+  //   }
+  //   return collideBetweenBoxes;
+  // };
+  // if (sinkInWater) {
+  //   const drownInWater = createLakeObjects.some((lakeobject) => !frogger.crashWith(lakeobject) && frogger.y < frogRoad.canvas.height - 350);
+  // }
+  if (collideWithObstacles || collideWithBorders || collideBetweenBoxes /* || collideWithFilledBoxes */ ) {
     frogRoad.stop();
     if (frogger.lifes > 0) {
       const returnToBeginnning = () => {
@@ -323,6 +342,7 @@ const checkGameOver = () => {
     } else {
       console.log('game over!');
       alert('game over for this frog!');
+      document.onkeyup();
     }
   }
 };
@@ -336,6 +356,7 @@ const playFrog = () => {
   drawBoxes();
   updateObstacles();
   checkJumpToObject();
+  checkWin();
   checkGameOver();
 };
 
