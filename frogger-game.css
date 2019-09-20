@@ -1,6 +1,7 @@
 * {
   margin: 0px;
-} 
+}
+
 canvas {
   /* border: 2px solid blue; */
   position: absolute;
@@ -11,9 +12,9 @@ canvas {
 }
 
 body {
-  width:100%;
-  height: 100%;
-  background-image: url('../frogger-the-game/images/frogger-start-game.png');
+  width: 100vw;
+  height: 100vh;
+  background-image: url('../frogger-the-game/images/frogger-start-game-2.png');
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -26,7 +27,7 @@ body {
 }
 
 .row {
-  height:100%;
+  height: 100%;
 }
 
 #frogger {

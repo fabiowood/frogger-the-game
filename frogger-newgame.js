@@ -18,7 +18,7 @@ const frogRoad = {
     this.canvas.height = 600;
     this.context = this.canvas.getContext('2d');
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    this.interval = setInterval(playFrog, 30);
+    this.interval = setInterval(playFrog, 25);
   },
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -34,15 +34,6 @@ const frogRoad = {
     return (borderUp || borderDown || borderLeft || borderRight);
   },
   gameLevel: 1,
-  // score: function () {
-  //   let totalPoints = 0;
-  //   this.context.font = '18px serif';
-  //   this.context.fillStyle = 'blue';
-  //   this.context.fillText(`Score: ${totalPoints}!`, 0, 570);
-  //   return totalPoints;
-  // },
-  // restart: function()
-  // pause: function()
 };
 
 // Draw The Board!
@@ -75,7 +66,17 @@ class Boxes {
     this.width = width;
     this.height = height;
   }
+
+  drawFilledBoxes() {
+    frogRoad.context.drawImage(winnerFrogImage, this.x, this.y, this.width, this.height);
+  }
 }
+
+const winnerFrogImage = new Image();
+winnerFrogImage.src = './images/happy-frog.png';
+
+const rockImage = new Image();
+rockImage.src = './images/rocks.jpg';
 
 const drawBoxes = () => {
   this.width = 135;
@@ -86,18 +87,12 @@ const drawBoxes = () => {
     if (boxCounter === 0) {
       createBoxes.push(new Boxes(this.width, this.height, 0, this.y));
       boxBoundaries.push(new Boxes(this.x, this.y, this.width, this.height));
-      const rockImage = new Image();
-      rockImage.src = './images/rocks.jpg';
       frogRoad.context.drawImage(rockImage, this.x, this.y, this.width, this.height);
-      // frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
     } else {
       this.x += this.width * 2;
       createBoxes.push(new Boxes(this.width, this.height, this.x - this.width, 0));
       boxBoundaries.push(new Boxes(this.x, this.y, this.width, this.height));
-      const rockImage = new Image();
-      rockImage.src = './images/rocks.jpg';
       frogRoad.context.drawImage(rockImage, this.x, this.y, this.width, this.height);
-      // frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
     }
   }
 };
@@ -250,14 +245,24 @@ class RoadObstacles {
     const carImage = new Image();
     carImage.src = './images/ford-mustang.png';
     frogRoad.context.drawImage(carImage, this.x, this.y, this.width, this.height);
-    // frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
   }
 
   moveLakeObjects() {
     const crocImage = new Image();
     crocImage.src = './images/crocodiles.png';
     frogRoad.context.drawImage(crocImage, this.x, this.y, this.width, this.height);
-    // frogRoad.context.fillRect(this.x, this.y, this.width, this.height);
+  }
+
+  moveLakeWood() {
+    const woodImage = new Image();
+    woodImage.src = './images/woods.jpg';
+    frogRoad.context.drawImage(woodImage, this.x, this.y, this.width, this.height);
+  }
+
+  moveTrucks() {
+    const truckImage = new Image();
+    truckImage.src = './images/trucks.png';
+    frogRoad.context.drawImage(truckImage, this.x, this.y, this.width, this.height);
   }
 
   left() {
@@ -281,7 +286,7 @@ const updateObstacles = () => {
   frogRoad.frames += 1;
   let yObs = frogRoad.canvas.height;
   let yLakeObject = frogRoad.canvas.height - 370;
-  if (frogRoad.frames % 120 === 0) {
+  if (frogRoad.frames % 110 === 0) {
     for (let roadCounter = 0; roadCounter < 5; roadCounter += 1) {
       if (roadCounter % 2 === 0) {
         yObs -= 85;
@@ -304,7 +309,7 @@ const updateObstacles = () => {
   for (let obstacleCounter = 0; obstacleCounter < createObstacles.length; obstacleCounter += 1) {
     if (obstacleCounter % 2 === 0) {
       createObstacles[obstacleCounter].x += 1;
-      createObstacles[obstacleCounter].move();
+      createObstacles[obstacleCounter].moveTrucks();
     } else {
       createObstacles[obstacleCounter].x -= 1;
       createObstacles[obstacleCounter].move();
@@ -316,7 +321,7 @@ const updateObstacles = () => {
       createLakeObjects[lakeObsCounter].moveLakeObjects();
     } else {
       createLakeObjects[lakeObsCounter].x -= 1;
-      createLakeObjects[lakeObsCounter].moveLakeObjects();
+      createLakeObjects[lakeObsCounter].moveLakeWood();
     }
   }
 };
@@ -327,15 +332,33 @@ let targetBoxes = 0;
 
 const notAllowedBoxes = []; // array with boxes already filled by the player
 
+const printFilledBoxes = () => {
+  if (notAllowedBoxes.length !== 0) {
+    notAllowedBoxes.forEach((item) => {
+      item.drawFilledBoxes();
+    });
+  }
+};
+
 const checkWin = () => {
   const fillBoxes = createBoxes.some((box) => (frogger.y <= box.height) && ((frogger.x > box.x && frogger.x < box.x + box.width) || (frogger.x > 1055 && frogger.x < frogRoad.canvas.width)));
   if (fillBoxes) {
     targetBoxes += 1;
-    const winnerFrogImage = new Image();
-    winnerFrogImage.src = './images/happy-frog.png';
-    frogRoad.context.drawImage(winnerFrogImage, frogger.x, frogger.y, 100, 20);
-    // frogRoad.totalPoints += 500;
-    notAllowedBoxes.push(new Boxes(270, 30, frogger.x - 135, 40));
+    if (frogger.x > 0 && frogger.x < 110) {
+      notAllowedBoxes.push(new Boxes(100, 35, 0, 30));
+    }
+    if (frogger.x > 245 && frogger.x < 380) {
+      notAllowedBoxes.push(new Boxes(120, 35, 245, 30));
+    }
+    if (frogger.x > 515 && frogger.x < 650) {
+      notAllowedBoxes.push(new Boxes(120, 35, 515, 30));
+    }
+    if (frogger.x > 785 && frogger.x < 920) {
+      notAllowedBoxes.push(new Boxes(120, 35, 785, 30));
+    }
+    if (frogger.x > 1055 && frogger.x < frogRoad.canvas.width) {
+      notAllowedBoxes.push(new Boxes(120, 35, 1055, 30));
+    }
     if (targetBoxes === 5) {
       console.log('Well Done! Go To Next Level!');
       alert('Well Done! Go To Next Level!');
@@ -345,6 +368,9 @@ const checkWin = () => {
       frogger.x = 600;
       frogger.y = 560;
       document.onkeyup();
+      for (let noBoxesCounter = 0; noBoxesCounter < 5; noBoxesCounter += 1) {
+        notAllowedBoxes.pop();
+      }
     } else {
       console.log('good job');
       alert('good job!');
@@ -363,6 +389,8 @@ let frogState = true;
 
 let sinkInWater = false;
 
+let drownInWater = false;
+
 const checkJumpToObject = () => {
   if (frogState) {
     createLakeObjects.some((wood) => {
@@ -375,12 +403,10 @@ const checkJumpToObject = () => {
   }
 };
 
-let drownInWater = false;
-
 const checkGameOver = () => {
   const collideWithObstacles = createObstacles.some((RoadObstacles) => frogger.crashWith(RoadObstacles));
   const collideWithBorders = frogRoad.borders();
-  const collideWithFilledBoxes = notAllowedBoxes.some((box) => (frogger.y <= box.y + box.height) && (frogger.x > box.x) && (frogger.x < box.x + box.width));
+  const collideWithFilledBoxes = notAllowedBoxes.some((box) => (frogger.y <= 78) && (frogger.x > box.x) && (frogger.x < box.x + box.width));
   const collideBetweenBoxes = boxBoundaries.some((boundary) => (frogger.y < boundary.y - 10) && (frogger.x > boundary.x) && (frogger.x < boundary.x + boundary.width));
   if (sinkInWater) {
     drownInWater = createLakeObjects.some((lakeobject) => !frogger.crashWater(lakeobject) && frogger.y < frogRoad.canvas.height - 375);
@@ -399,7 +425,6 @@ const checkGameOver = () => {
       console.log('game over!');
       alert('game over for this frog!');
       setTimeout(() => location.reload(), 3000);
-      // setTimeout(frogRoad.start(), 2000);
       document.onkeyup();
     }
   }
@@ -427,6 +452,6 @@ const playFrog = () => {
   frogger.updateFrog();
   checkJumpToObject();
   checkWin();
-  // frogRoad.score();
+  printFilledBoxes();
   checkGameOver();
 };
