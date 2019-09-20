@@ -1,8 +1,41 @@
 * {
-  margin: 5px 15px;
+  margin: 0px;
 } 
 canvas {
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
+  position: absolute;
+  z-index: 5;
+  margin: 0px;
+  width: 100%;
+  height: 100%;
 }
 
+body {
+  width:100%;
+  height: 100%;
+  background-image: url('../frogger-the-game/images/frogger-start-game.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
 
+#start-game {
+  position: absolute;
+  z-index: 10;
+  height: 100%;
+  display: block;
+}
+
+.row {
+  height:100%;
+}
+
+#frogger {
+  font-size: 90px;
+  font-weight: bold;
+  color: rgb(212, 230, 215);
+}
+
+#button {
+  padding: 25px;
+  font-size: 36px;
+}
